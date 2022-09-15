@@ -20,12 +20,12 @@ void LED::mode(int i) {
       digitalWrite(pin, 0);
       break;
     case 2:
-      for (int i = 0; i < 1000; i++) {
+      for (int i = 1000; i > 0; i--) {
         analogWrite(pin, i);
         delay(1);
       }
-      delay(1000);
-      for (int i = 1000; i > 0; i--) {
+      delay(100);
+      for (int i = 0; i < 1000; i++) {
         analogWrite(pin, i);
         delay(1);
       }
