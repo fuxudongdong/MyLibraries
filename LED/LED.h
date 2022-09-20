@@ -3,11 +3,13 @@
 
 #include "Arduino.h"
 
-class LED {
-  private:
+class LED
+{
+private:
     int pin = 2;
     int range = 1000;
-  public:
+
+public:
     LED(int pin);
     ~LED();
     void mode(int i);
