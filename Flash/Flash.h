@@ -3,10 +3,12 @@
 
 #include "Arduino.h"
 
-class Flash {
-  private:
+class Flash
+{
+private:
     String fileName = "";
-  public:
+
+public:
     Flash(String file);
     ~Flash();
     void add(String str, String name);
