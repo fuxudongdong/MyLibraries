@@ -23,7 +23,6 @@ void ledTh()
 
 void LED::ledTherad()
 {
-    Serial.println("ledTherad");
     if (millis() - ms >= msStep)
     {
         if (_range <= 0)

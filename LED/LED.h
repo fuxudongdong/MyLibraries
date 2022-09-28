@@ -10,12 +10,12 @@ private:
     int pin = 2;
     int range = 1000;
     int rangeStep = 1;
-    int msStep = 1;
     int _range = range * 2;
     int ms = millis();
     // static void staticLEDTherad();
 
 public:
+    int msStep = 1;
     LED(int pin);
     ~LED();
     void mode(int i);
