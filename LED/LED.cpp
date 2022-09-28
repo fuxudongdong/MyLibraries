@@ -13,8 +13,36 @@ LED::~LED()
 {
 }
 
-int ms = millis();
-int ledTime = 0;
+Ritos ledTarefa;
+LED *led0;
+
+void ledTh()
+{
+    led0->ledTherad();
+}
+
+void LED::ledTherad()
+{
+    Serial.println("ledTherad");
+    if (millis() - ms >= msStep)
+    {
+        if (_range <= 0)
+        {
+            _range = range * 2;
+        }
+        else if (_range > range)
+        {
+            analogWrite(pin, _range - range);
+        }
+        else
+        {
+            analogWrite(pin, range - _range);
+        }
+        _range = _range - rangeStep;
+        ms = millis();
+    }
+}
+
 void LED::mode(int i)
 {
     switch (i)
@@ -26,26 +54,11 @@ void LED::mode(int i)
         digitalWrite(pin, 0);
         break;
     case 2:
-        if (ledTime < 1000)
-        {
-            if (millis() - ms >= 1)
-            {
-                analogWrite(pin, 1000 - i);
-                ms = millis();
-            }
-        }
-        else if (ledTime >= 1000)
-        {
-            if (millis() - ms >= 1)
-            {
-                analogWrite(pin, i - 1000);
-                ms = millis();
-            }
-        }
-        else if (ledTime == 2000)
-        {
-            ledTime = 0;
-        }
+        msStep = 1;
+        rangeStep = 1;
+        ledTarefa.task(ledTh);
+        delay(50000);
+        ledTarefa.detach();
         break;
     case 3:
         digitalWrite(pin, !digitalRead(pin));
@@ -79,7 +92,6 @@ void LED::mode(int i)
         digitalWrite(pin, !digitalRead(pin));
         break;
     }
-    ledTime++;
 }
 
 void LED::setRange(int myRange)
