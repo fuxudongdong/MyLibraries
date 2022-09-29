@@ -1,6 +1,5 @@
 #include "LED.h"
 #include "Arduino.h"
-#include <ritos.h>
 
 LED::LED(int p) : pin(p)
 {
@@ -13,17 +12,45 @@ LED::~LED()
 {
 }
 
-Ritos ledTarefa;
-LED *led0;
-
-void ledTh()
+void LED::pilotLED()
 {
-    led0->ledTherad();
+    // Serial.println(mode);
+    switch (mode)
+    {
+    case 0:
+        digitalWrite(pin, 1); //关
+        break;
+    case 1:
+        digitalWrite(pin, 0); //开
+        break;
+    case 2:
+        digitalWrite(pin, !digitalRead(pin)); //切换
+        break;
+    case 3:
+        setMStep(3); // 3秒循环
+        setRangeStep(1);
+        pwmTherad();
+        break;
+    case 4:
+        setMStep(1); // 0.5秒循环
+        setRangeStep(2);
+        pwmTherad();
+        break;
+    case 5:
+        setMStep(50); // 50ms切换一次
+        twinkleTherad();
+        break;
+    case 6:
+        setMStep(1000); // 1秒切换一次
+        twinkleTherad();
+        break;
+    default:
+        break;
+    }
 }
-
-void LED::ledTherad()
+void LED::pwmTherad()
 {
-    if (millis() - ms >= msStep)
+    if (millis() - ms >= mstep)
     {
         if (_range <= 0)
         {
@@ -42,58 +69,32 @@ void LED::ledTherad()
     }
 }
 
-void LED::mode(int i)
+void LED::twinkleTherad()
 {
-    switch (i)
+    if (millis() - ms >= mstep)
     {
-    case 0:
-        digitalWrite(pin, 1);
-        break;
-    case 1:
-        digitalWrite(pin, 0);
-        break;
-    case 2:
-        msStep = 1;
-        rangeStep = 1;
-        ledTarefa.task(ledTh);
-        delay(50000);
-        ledTarefa.detach();
-        break;
-    case 3:
         digitalWrite(pin, !digitalRead(pin));
         ms = millis();
-        while (millis() - ms < 500)
-        {
-            /* code */
-        }
-        break;
-    case 4:
-        for (int i = 750; i < 1000; i++)
-        {
-            analogWrite(pin, i);
-            ms = millis();
-            while (millis() - ms < 1)
-            {
-                /* code */
-            }
-        }
-        for (int i = 1000; i > 750; i--)
-        {
-            analogWrite(pin, i);
-            ms = millis();
-            while (millis() - ms < 1)
-            {
-                /* code */
-            }
-        }
-        break;
-    case 5:
-        digitalWrite(pin, !digitalRead(pin));
-        break;
     }
+}
+
+void LED::setMode(int i)
+{
+    mode = i;
 }
 
 void LED::setRange(int myRange)
 {
     range = myRange;
+    analogWriteRange(range); //占空比
+}
+
+void LED::setMStep(int _mstep)
+{
+    mstep = _mstep;
+}
+
+void LED::setRangeStep(int _rangeStep)
+{
+    rangeStep = _rangeStep;
 }
